@@ -1,0 +1,27 @@
+import { cn } from '../../utils/cn';
+
+export const Logo = ({ className, compact = false }) => (
+  <span className={cn('inline-flex items-center gap-3', className)}>
+    <svg
+      viewBox="0 0 64 64"
+      className="h-9 w-9 shrink-0"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <rect width="64" height="64" fill="#101010" stroke="#3A3A3A" strokeWidth="2" />
+      <path d="M14 50 32 10l18 40h-8.5L32 26.5 22.5 50H14Z" fill="#39FF14" />
+      <path d="M24 43h16l4 7H20l4-7Z" fill="#FF00E5" />
+      <path d="M45 8h11v11H45z" fill="#FF5C00" />
+    </svg>
+    {!compact && (
+      <span className="flex flex-col leading-none">
+        <span className="font-display text-xl font-bold tracking-[-0.08em] text-white">
+          AUTHIFY
+        </span>
+        <span className="mt-1 text-[8px] font-bold uppercase tracking-[0.28em] text-muted">
+          Identity control
+        </span>
+      </span>
+    )}
+  </span>
+);

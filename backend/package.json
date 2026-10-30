@@ -1,0 +1,43 @@
+{
+  "name": "authify-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AUTHIFY MERN authentication API",
+  "type": "module",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "migrate:users": "node scripts/migrate-mysql-users.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.0.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.16.4",
+    "nodemailer": "^10.3.1",
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.13.0",
+    "globals": "^17.13.0",
+    "mongodb-memory-server": "^10.1.4",
+    "mysql2": "^3.24.6",
+    "prettier": "^3.6.2",
+    "supertest": "^7.1.4",
+    "vitest": "^5.0.5"
+  }
+}

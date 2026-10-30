@@ -1,0 +1,14 @@
+node_modules/
+dist/
+coverage/
+logs/
+*.log
+
+.env
+.env.*
+!.env.example
+
+legacy-backend/
+legacy-frontend/
+
+.DS_Store
