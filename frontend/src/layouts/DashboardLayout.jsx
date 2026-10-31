@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+  House,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -13,13 +14,14 @@ import {
 import { toast } from 'sonner';
 import { useAuth } from '../context/auth-context';
 import { getApiError } from '../utils/apiError';
-import { getInitials } from '../utils/format';
 import { cn } from '../utils/cn';
 import { Button } from '../components/common/Button';
 import { Logo } from '../components/common/Logo';
+import { UserAvatar } from '../components/common/UserAvatar';
 import { Badge } from '../components/common/Badge';
 
 const navigation = [
+  { to: '/', label: 'Home', icon: House, code: '00', end: true },
   { to: '/dashboard', label: 'Overview', icon: LayoutDashboard, code: '01', end: true },
   { to: '/dashboard/profile', label: 'Profile', icon: UserRound, code: '02' },
   { to: '/dashboard/security', label: 'Security', icon: ShieldCheck, code: '03' },
@@ -37,7 +39,14 @@ const SidebarContent = ({ onNavigate, onLogout, loggingOut }) => {
   return (
     <div className="flex h-full flex-col">
       <div className="flex h-20 shrink-0 items-center border-b-2 border-line px-6">
-        <Logo />
+        <Link
+          to="/"
+          onClick={onNavigate}
+          className="inline-flex"
+          aria-label="AUTHIFY home"
+        >
+          <Logo />
+        </Link>
       </div>
 
       <div className="border-b-2 border-line px-6 py-5">
@@ -93,9 +102,11 @@ const SidebarContent = ({ onNavigate, onLogout, loggingOut }) => {
       <div className="border-t-2 border-line p-3">
         <div className="mb-3 border-2 border-line bg-card p-3">
           <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center border-2 border-acid bg-acid font-display text-xs font-bold text-void">
-              {getInitials(user?.fullName)}
-            </span>
+            <UserAvatar
+              name={user?.fullName}
+              src={user?.avatar}
+              className="h-9 w-9 text-xs"
+            />
             <div className="min-w-0">
               <p className="truncate font-display text-xs font-bold uppercase tracking-[-0.01em] text-white">
                 {user?.fullName}
@@ -229,9 +240,17 @@ export const DashboardLayout = () => {
             <Badge variant="acid" dot className="hidden sm:inline-flex">
               Secure session
             </Badge>
-            <span className="flex h-9 w-9 items-center justify-center border-2 border-line bg-card font-display text-xs font-bold text-acid">
-              {getInitials(user?.fullName)}
-            </span>
+            <Link
+              to="/dashboard/profile"
+              aria-label="Open profile"
+              className="inline-flex"
+            >
+              <UserAvatar
+                name={user?.fullName}
+                src={user?.avatar}
+                className="h-9 w-9 text-xs"
+              />
+            </Link>
           </div>
         </header>
 

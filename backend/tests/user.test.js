@@ -47,6 +47,38 @@ describe('AUTHIFY user API', () => {
     expect(profile.body.data.user.fullName).toBe('Updated Name');
   });
 
+  it('updates and clears the profile image', async () => {
+    const agent = createAgent();
+    const { login } = await loginVerifiedUser(agent);
+    const avatar =
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Zl9sAAAAASUVORK5CYII=';
+
+    const updated = await sendWithCsrf(
+      agent,
+      'put',
+      '/api/user/profile',
+      login.csrfToken,
+      { fullName: 'Avatar User', avatar },
+    );
+
+    expect(updated.status).toBe(200);
+    expect(updated.body.data.user.avatar).toBe(avatar);
+
+    const profile = await agent.get('/api/user/profile').expect(200);
+    expect(profile.body.data.user.avatar).toBe(avatar);
+
+    const cleared = await sendWithCsrf(
+      agent,
+      'put',
+      '/api/user/profile',
+      login.csrfToken,
+      { fullName: 'Avatar User', avatar: '' },
+    );
+
+    expect(cleared.status).toBe(200);
+    expect(cleared.body.data.user.avatar).toBeNull();
+  });
+
   it('changes the password only after verifying the current password', async () => {
     const agent = createAgent();
     const { payload, login } = await loginVerifiedUser(agent);

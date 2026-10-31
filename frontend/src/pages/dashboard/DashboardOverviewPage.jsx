@@ -18,6 +18,7 @@ import { formatDateOnly, getFirstName } from '../../utils/format';
 import { parseUserAgent } from '../../utils/userAgent';
 import { Badge } from '../../components/common/Badge';
 import { Button } from '../../components/common/Button';
+import { UserAvatar } from '../../components/common/UserAvatar';
 import { PageHeader } from '../../components/dashboard/PageHeader';
 import { Panel } from '../../components/dashboard/Panel';
 import { StatCard } from '../../components/dashboard/StatCard';
@@ -200,9 +201,11 @@ export const DashboardOverviewPage = () => {
         <div className="space-y-6">
           <Panel code="IDENTITY // FILE" title="Account facts">
             <div className="mb-5 flex items-center gap-4">
-              <span className="flex h-14 w-14 items-center justify-center border-2 border-acid bg-acid font-display text-xl font-bold text-void">
-                {getFirstName(user.fullName).charAt(0).toUpperCase()}
-              </span>
+              <UserAvatar
+                name={user.fullName}
+                src={user.avatar}
+                className="h-14 w-14 text-xl"
+              />
               <div className="min-w-0">
                 <p className="truncate font-display text-lg font-bold uppercase tracking-[-0.03em] text-white">
                   {user.fullName}

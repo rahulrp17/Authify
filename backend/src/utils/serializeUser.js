@@ -3,6 +3,7 @@ export const serializeUser = (user) => ({
   userId: user.userId,
   fullName: user.fullName,
   email: user.email,
+  avatar: user.avatar || null,
   isAccountVerified: user.isAccountVerified,
   passwordChangedAt: user.passwordChangedAt,
   lastLoginAt: user.lastLoginAt,

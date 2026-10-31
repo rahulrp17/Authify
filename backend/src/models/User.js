@@ -31,6 +31,11 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Password is required.'],
       select: false,
     },
+    avatar: {
+      type: String,
+      default: '',
+      maxlength: [400000, 'Profile image is too large.'],
+    },
     isAccountVerified: {
       type: Boolean,
       default: false,

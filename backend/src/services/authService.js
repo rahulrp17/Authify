@@ -248,8 +248,13 @@ export const logout = async (token) => {
   }
 };
 
-export const updateProfile = async (user, { fullName }) => {
+export const updateProfile = async (user, { fullName, avatar }) => {
   user.fullName = fullName;
+
+  if (avatar !== undefined) {
+    user.avatar = avatar || '';
+  }
+
   await user.save();
 
   return serializeUser(user);

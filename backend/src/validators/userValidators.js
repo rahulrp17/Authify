@@ -8,12 +8,25 @@ const password = z
   .regex(/[A-Z]/, 'Password must include an uppercase letter.')
   .regex(/[0-9]/, 'Password must include a number.');
 
+const avatar = z
+  .string()
+  .trim()
+  .max(400000, 'Profile image is too large.')
+  .refine(
+    (value) =>
+      value === '' ||
+      /^data:image\/(?:png|jpe?g|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(value) ||
+      /^https:\/\/[^\s]+$/.test(value),
+    'Profile image must be a PNG, JPEG, WebP, or HTTPS URL.',
+  );
+
 export const updateProfileSchema = z.object({
   fullName: z
     .string()
     .trim()
     .min(2, 'Full name must be at least 2 characters.')
     .max(80, 'Full name must be at most 80 characters.'),
+  avatar: avatar.nullable().optional(),
 });
 
 export const changePasswordSchema = z.object({
