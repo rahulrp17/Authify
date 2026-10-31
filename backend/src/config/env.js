@@ -51,6 +51,7 @@ const clientUrls = clientUrl
   .filter(Boolean);
 
 const smtpHost = process.env.SMTP_HOST || '';
+const resendApiKey = (process.env.RESEND_API_KEY || '').trim();
 const emailFromName = (process.env.EMAIL_FROM_NAME || 'AUTHIFY').trim();
 const emailFromAddress = (process.env.EMAIL_FROM_ADDRESS || '').trim();
 const legacyEmailFrom = (process.env.EMAIL_FROM || '').trim();
@@ -59,8 +60,8 @@ const emailFrom =
     ? `${emailFromName} <${emailFromAddress}>`
     : legacyEmailFrom || 'AUTHIFY <no-reply@authify.local>';
 
-if (isProduction && !smtpHost) {
-  throw new Error('SMTP_HOST must be set in production.');
+if (isProduction && !smtpHost && !resendApiKey) {
+  throw new Error('SMTP_HOST or RESEND_API_KEY must be set in production.');
 }
 
 if (isProduction && !emailFromAddress && !legacyEmailFrom) {
@@ -105,6 +106,7 @@ export const env = {
   clientUrl,
   clientUrls,
   smtpHost,
+  resendApiKey,
   smtpPort: number('SMTP_PORT', 587, { min: 1, max: 65535 }),
   smtpSecure: boolean('SMTP_SECURE', false),
   smtpUser: process.env.SMTP_USER || '',

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { toast } from 'sonner';
 import { ArrowRight, Mail } from 'lucide-react';
 import { authService } from '../../services/authService';
 import { applyServerErrors, getApiError } from '../../utils/apiError';
@@ -40,6 +41,7 @@ export const ForgotPasswordPage = () => {
     try {
       await authService.forgotPassword({ email: values.email });
       setSentTo(values.email);
+      toast.success('Recovery code sent. Check your inbox.');
     } catch (error) {
       const apiError = getApiError(error);
       setFormError(apiError.message);

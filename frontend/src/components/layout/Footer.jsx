@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { ArrowUpRight, LockKeyhole } from 'lucide-react';
 import { Logo } from '../common/Logo';
 import { Badge } from '../common/Badge';
@@ -40,7 +41,11 @@ const footerTicker = [
 
 const WordmarkMarquee = () => (
   <div className="flex overflow-hidden py-4" aria-hidden="true">
-    <div className="marquee-track flex w-max items-center">
+    <motion.div
+      className="flex w-max items-center will-change-transform"
+      animate={{ x: ['0%', '-50%'] }}
+      transition={{ duration: 32, ease: 'linear', repeat: Infinity }}
+    >
       {[0, 1].map((group) => (
         <div key={group} className="flex shrink-0 items-center">
           {[0, 1, 2].map((index) => (
@@ -55,7 +60,7 @@ const WordmarkMarquee = () => (
           ))}
         </div>
       ))}
-    </div>
+    </motion.div>
   </div>
 );
 

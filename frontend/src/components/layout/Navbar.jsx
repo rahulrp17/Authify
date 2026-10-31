@@ -32,7 +32,12 @@ export const Navbar = () => {
   return (
     <header className="sticky top-0 z-50">
       <div className="relative overflow-hidden border-b-2 border-line bg-surface">
-        <div className="ticker-lines pointer-events-none absolute inset-0 opacity-70" aria-hidden="true" />
+        <motion.div
+          className="ticker-lines pointer-events-none absolute inset-0 opacity-70"
+          aria-hidden="true"
+          animate={{ backgroundPosition: ['0px 0px', '38px 0px'] }}
+          transition={{ duration: 5, ease: 'linear', repeat: Infinity }}
+        />
         <Marquee
           items={[
             'Encrypted by default',
@@ -48,7 +53,7 @@ export const Navbar = () => {
 
       <div
         className={cn(
-          'border-b-2 border-line bg-void/95 backdrop-blur transition-colors',
+          'relative border-b-2 border-line bg-void/95 backdrop-blur transition-colors',
           scrolled && 'bg-void',
         )}
       >
@@ -114,11 +119,11 @@ export const Navbar = () => {
           {open && (
             <motion.div
               id="mobile-navigation"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="overflow-hidden border-t-2 border-line bg-surface lg:hidden"
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+              className="absolute inset-x-0 top-full z-50 max-h-[calc(100svh-8rem)] overflow-y-auto border-y-2 border-line bg-surface shadow-[0_24px_60px_rgba(0,0,0,0.55)] lg:hidden"
             >
               <div className="space-y-1 px-5 py-5">
                 {navLinks.map((link) => (

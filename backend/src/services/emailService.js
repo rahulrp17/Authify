@@ -42,22 +42,54 @@ const createTransport = () => {
 
 const transport = createTransport();
 
-const sendMail = async ({ to, subject, html, text }) => {
-  const info = await transport.sendMail({
-    from: env.emailFrom,
-    to,
-    subject,
-    html,
-    text,
-    disableFileAccess: true,
-    disableUrlAccess: true,
+const sendWithResend = async ({ to, subject, html, text }) => {
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${env.resendApiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: env.emailFrom,
+      to: [to],
+      subject,
+      html,
+      ...(text ? { text } : {}),
+    }),
+    signal: AbortSignal.timeout(10000),
   });
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(
+      payload?.message || `Resend request failed with status ${response.status}.`,
+    );
+  }
+
+  return payload;
+};
+
+const sendMail = async ({ to, subject, html, text }) => {
+  const useResend = Boolean(env.resendApiKey) && !env.isTest;
+
+  const info = useResend
+    ? await sendWithResend({ to, subject, html, text })
+    : await transport.sendMail({
+        from: env.emailFrom,
+        to,
+        subject,
+        html,
+        text,
+        disableFileAccess: true,
+        disableUrlAccess: true,
+      });
 
   if (env.isTest) {
     outbox.push({ to, subject, html, text, info });
   }
 
-  if (!env.isProduction && !env.smtpHost) {
+  if (!env.isProduction && !env.smtpHost && !useResend) {
     console.info(`[email] Captured "${subject}" for ${to} (SMTP not configured)`);
   }
 

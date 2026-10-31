@@ -1,6 +1,13 @@
+import { motion } from 'framer-motion';
 import { cn } from '../../utils/cn';
 
-export const Marquee = ({ items, className, reverse = false, separator = '/' }) => {
+export const Marquee = ({
+  items,
+  className,
+  reverse = false,
+  separator = '/',
+  duration = 24,
+}) => {
   const content = (
     <div className="flex shrink-0 items-center">
       {items.map((item, index) => (
@@ -19,15 +26,14 @@ export const Marquee = ({ items, className, reverse = false, separator = '/' }) 
 
   return (
     <div className={cn('flex overflow-hidden', className)} aria-hidden="true">
-      <div
-        className={cn(
-          'marquee-track flex w-max',
-          reverse && '[animation-direction:reverse]',
-        )}
+      <motion.div
+        className="flex w-max will-change-transform"
+        animate={{ x: reverse ? ['-50%', '0%'] : ['0%', '-50%'] }}
+        transition={{ duration, ease: 'linear', repeat: Infinity }}
       >
         {content}
         {content}
-      </div>
+      </motion.div>
     </div>
   );
 };
