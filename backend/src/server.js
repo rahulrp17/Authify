@@ -20,6 +20,7 @@ const start = async () => {
 
   server = app.listen(env.port, () => {
     console.info(`[server] AUTHIFY API listening on port ${env.port} (${env.nodeEnv})`);
+    console.info(`[email] Provider: ${env.emailProvider}`);
   });
 };
 

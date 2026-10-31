@@ -41,11 +41,6 @@ export const register = async ({ fullName, email, password }) => {
     passwordChangedAt: new Date(),
   });
 
-  await safeSend(
-    () => emailService.sendWelcomeEmail({ to: user.email, name: user.fullName }),
-    'welcome email',
-  );
-
   const otpResult = await otpService.createOtp({
     user,
     purpose: otpService.OTP_PURPOSE.EMAIL_VERIFICATION,
@@ -122,6 +117,11 @@ export const verifyEmail = async ({ email, otp }) => {
 
   user.isAccountVerified = true;
   await user.save();
+
+  await safeSend(
+    () => emailService.sendWelcomeEmail({ to: user.email, name: user.fullName }),
+    'welcome email',
+  );
 
   return serializeUser(user);
 };

@@ -42,6 +42,38 @@ const createTransport = () => {
 
 const transport = createTransport();
 
+const sendWithBrevo = async ({ to, subject, html, text }) => {
+  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      'api-key': env.brevoApiKey,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({
+      sender: {
+        name: env.emailFromName,
+        email: env.emailFromAddress,
+      },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html,
+      ...(text ? { textContent: text } : {}),
+    }),
+    signal: AbortSignal.timeout(10000),
+  });
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(
+      payload?.message || `Brevo request failed with status ${response.status}.`,
+    );
+  }
+
+  return payload;
+};
+
 const sendWithResend = async ({ to, subject, html, text }) => {
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -71,25 +103,28 @@ const sendWithResend = async ({ to, subject, html, text }) => {
 };
 
 const sendMail = async ({ to, subject, html, text }) => {
-  const useResend = Boolean(env.resendApiKey) && !env.isTest;
+  const useBrevo = Boolean(env.brevoApiKey) && !env.isTest;
+  const useResend = !useBrevo && Boolean(env.resendApiKey) && !env.isTest;
 
-  const info = useResend
-    ? await sendWithResend({ to, subject, html, text })
-    : await transport.sendMail({
-        from: env.emailFrom,
-        to,
-        subject,
-        html,
-        text,
-        disableFileAccess: true,
-        disableUrlAccess: true,
-      });
+  const info = useBrevo
+    ? await sendWithBrevo({ to, subject, html, text })
+    : useResend
+      ? await sendWithResend({ to, subject, html, text })
+      : await transport.sendMail({
+          from: env.emailFrom,
+          to,
+          subject,
+          html,
+          text,
+          disableFileAccess: true,
+          disableUrlAccess: true,
+        });
 
   if (env.isTest) {
     outbox.push({ to, subject, html, text, info });
   }
 
-  if (!env.isProduction && !env.smtpHost && !useResend) {
+  if (!env.isProduction && !env.smtpHost && !useBrevo && !useResend) {
     console.info(`[email] Captured "${subject}" for ${to} (SMTP not configured)`);
   }
 

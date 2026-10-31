@@ -51,6 +51,7 @@ const clientUrls = clientUrl
   .filter(Boolean);
 
 const smtpHost = process.env.SMTP_HOST || '';
+const brevoApiKey = (process.env.BREVO_API_KEY || '').trim();
 const resendApiKey = (process.env.RESEND_API_KEY || '').trim();
 const emailFromName = (process.env.EMAIL_FROM_NAME || 'AUTHIFY').trim();
 const emailFromAddress = (process.env.EMAIL_FROM_ADDRESS || '').trim();
@@ -59,9 +60,24 @@ const emailFrom =
   emailFromAddress
     ? `${emailFromName} <${emailFromAddress}>`
     : legacyEmailFrom || 'AUTHIFY <no-reply@authify.local>';
+const emailProvider = isTest
+  ? 'test'
+  : brevoApiKey
+    ? 'brevo'
+    : resendApiKey
+      ? 'resend'
+      : smtpHost
+        ? 'smtp'
+        : 'capture';
 
-if (isProduction && !smtpHost && !resendApiKey) {
-  throw new Error('SMTP_HOST or RESEND_API_KEY must be set in production.');
+if (isProduction && !smtpHost && !resendApiKey && !brevoApiKey) {
+  throw new Error(
+    'SMTP_HOST, RESEND_API_KEY, or BREVO_API_KEY must be set in production.',
+  );
+}
+
+if (isProduction && brevoApiKey && !emailFromAddress) {
+  throw new Error('EMAIL_FROM_ADDRESS must be set when using Brevo.');
 }
 
 if (isProduction && !emailFromAddress && !legacyEmailFrom) {
@@ -106,6 +122,7 @@ export const env = {
   clientUrl,
   clientUrls,
   smtpHost,
+  brevoApiKey,
   resendApiKey,
   smtpPort: number('SMTP_PORT', 587, { min: 1, max: 65535 }),
   smtpSecure: boolean('SMTP_SECURE', false),
@@ -114,5 +131,6 @@ export const env = {
   emailFrom,
   emailFromName,
   emailFromAddress: emailFromAddress || undefined,
+  emailProvider,
   rateLimitDisabled: boolean('RATE_LIMIT_DISABLED', isTest),
 };
